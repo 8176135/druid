@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use druid::menu::macos_menu_bar;
 use druid::shell::{runloop, WindowBuilder};
 use druid::widget::{ActionWrapper, Button, Column, Label, Padding};
-use druid::{LocalizedString, UiMain, UiState};
+use druid::{Env, LocalizedString, UiMain, UiState};
 
 fn main() {
     druid::shell::init();
@@ -33,6 +34,8 @@ fn main() {
     let state = UiState::new(root, 0u32);
     builder.set_title("Hello example");
     builder.set_handler(Box::new(UiMain::new(state)));
+    let env = Env::default();
+    builder.set_menu(macos_menu_bar().build(&mut 0, &env, &0));
     let window = builder.build().unwrap();
     window.show();
     run_loop.run();
