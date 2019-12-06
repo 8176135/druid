@@ -27,21 +27,21 @@ use crate::widget::{Align, Label, LabelText, SizedBox};
 use crate::{Point, RenderContext};
 
 /// A button with a text label.
-pub struct Button<T> {
-    label: Label<T>,
+pub struct Button<T, W: Widget<T>> {
+    label: W,
     /// A closure that will be invoked when the button is clicked.
     action: Box<dyn Fn(&mut EventCtx, &mut T, &Env)>,
 }
 
-impl<T: Data + 'static> Button<T> {
+impl<T: Data + 'static, W: Widget<T>> Button<T, W> {
     /// Create a new button. The closure provided will be called when the button
     /// is clicked.
     pub fn new(
-        text: impl Into<LabelText<T>>,
+        text: W,
         action: impl Fn(&mut EventCtx, &mut T, &Env) + 'static,
-    ) -> Button<T> {
+    ) -> Button<T, W> {
         Button {
-            label: Label::aligned(text, UnitPoint::CENTER),
+            label: text,
             action: Box::new(action),
         }
     }
@@ -76,7 +76,7 @@ impl<T: Data + 'static> Button<T> {
     pub fn noop(_: &mut EventCtx, _: &mut T, _: &Env) {}
 }
 
-impl<T: Data> Widget<T> for Button<T> {
+impl<T: Data, W: Widget<T>> Widget<T> for Button<T, W> {
     fn event(&mut self, ctx: &mut EventCtx, event: &Event, data: &mut T, env: &Env) {
         match event {
             Event::MouseDown(_) => {
